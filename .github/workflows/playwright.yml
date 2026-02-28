@@ -63,7 +63,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests on ${{ matrix.browser }}
-        run: npx playwright test --browser ${{ matrix.browser }} --grep "${{ matrix.tag }}"
+        run: npx playwright test --project ${{ matrix.browser }} --grep "${{ matrix.tag }}"
         env:
           BASE_URL: ${{ env.BASE_URL }}
           ENVIRONMENT: ${{ env.ENVIRONMENT }}
