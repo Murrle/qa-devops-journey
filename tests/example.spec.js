@@ -1,14 +1,14 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
+test('has title @chrome', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Playwright/);
 });
 
-test('get started link', async ({ page }) => {
+test('get started link @chrome', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
   // Click the get started link.
@@ -18,7 +18,7 @@ test('get started link', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
 });
 
-test('has correct title', async ({ page }) => {
+test('has correct title @firefox', async ({ page }) => {
   await page.goto('https://playwright.dev/');
   await expect(page).toHaveTitle(/Playwright/);
 });
