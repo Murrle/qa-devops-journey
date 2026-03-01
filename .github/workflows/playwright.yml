@@ -11,33 +11,7 @@ env:
   BASE_URL: https://playwright.dev
 
 jobs:
-  install:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
-
   test:
-    needs: install
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -62,8 +36,8 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests on ${{ matrix.browser }}
-        run: npx playwright test --project ${{ matrix.browser }} --grep "${{ matrix.tag }}"
+      - name: Run ${{ matrix.tag }} tests on ${{ matrix.browser }}
+        run: npx playwright test --project=${{ matrix.browser }} --grep "${{ matrix.tag }}"
         env:
           BASE_URL: ${{ env.BASE_URL }}
           ENVIRONMENT: ${{ env.ENVIRONMENT }}
@@ -75,3 +49,15 @@ jobs:
           name: playwright-report-${{ matrix.browser }}
           path: playwright-report/
           retention-days: 30
+
+  notify-on-failure:
+    needs: test
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Notify failure
+        run: |
+          echo "❌ Pipeline FAILED!"
+          echo "Browser matrix job failed on: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Check report at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
