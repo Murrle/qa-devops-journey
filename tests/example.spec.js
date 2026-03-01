@@ -22,3 +22,8 @@ test('has correct title @firefox', async ({ page }) => {
   await page.goto('https://playwright.dev/');
   await expect(page).toHaveTitle(/Playwright/);
 });
+
+test('deliberately failing test @chrome', async ({ page }) => {
+  await page.goto('https://playwright.dev/');
+  await expect(page).toHaveTitle(/ThisTitleDoesNotExist/);
+});
